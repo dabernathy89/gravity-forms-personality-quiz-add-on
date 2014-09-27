@@ -1,0 +1,22 @@
+#gfield_settings_choices_container li input.field-choice-text {
+    width: 300px !important;
+}
+
+#gfield_settings_choices_container.choice_with_value li input.field-choice-value {
+    width: 145px !important;
+}
+
+#gfield_settings_choices_container.choice_with_value li input.field-choice-text {
+    width: 145px !important;
+}
+
+.pq-choice-media-upload {
+    margin-top: 4px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+.gfield_radio img {
+    max-width: 100%;
+    height: auto;
+}
