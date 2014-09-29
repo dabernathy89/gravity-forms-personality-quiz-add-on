@@ -154,6 +154,13 @@ if (class_exists("GFForms")) {
                         </label>
                     </li>
 
+                    <li class="personality_quiz_shuffle field_setting">
+                        <input type="checkbox" id="field_personality_quiz_shuffle" onclick="SetFieldProperty('personalityQuizShuffle', this.checked);" />
+                        <label for="field_personality_quiz_shuffle" class="inline">
+                            <?php _e("Shuffle Answers", "gravityforms"); ?>
+                        </label>
+                    </li>
+
                     <li class="personality_quiz_replace_label field_setting">
                         <label for="field_personality_quiz_replace_label">
                             <?php _e("Personality Quiz Image Label", "gravityforms"); ?>
@@ -177,13 +184,13 @@ if (class_exists("GFForms")) {
                 ?>
                 <script type='text/javascript' src="<?php echo plugins_url( 'assets/media_upload.js' , __FILE__ ); ?>" /></script>
                 <script type='text/javascript'>
-                    //adding setting to fields of type "text"
-                    fieldSettings["radio"] += ", .enable_personality_quiz, .personality_quiz_replace_label";
-                    fieldSettings["checkbox"] += ", .enable_personality_quiz, .personality_quiz_replace_label";
+                    //adding setting to radio and checkbox fields
+                    fieldSettings["radio"] += ", .enable_personality_quiz, .personality_quiz_replace_label, .personality_quiz_shuffle";
+                    fieldSettings["checkbox"] += ", .enable_personality_quiz, .personality_quiz_replace_label, .personality_quiz_shuffle";
 
-                    //binding to the load field settings event to initialize the checkbox
                     jQuery(document).bind("gform_load_field_settings", function(event, field, form){
                         jQuery("#field_enable_personality_quiz").attr("checked", field["enablePersonalityQuiz"] == true);
+                        jQuery("#field_personality_quiz_shuffle").attr("checked", field["personalityQuizShuffle"] == true);
                         jQuery("#field_personality_quiz_replace_label").val(field["personalityQuizReplaceLabel"]);
                         jQuery("#field_personality_quiz_replace_label").on('change blur keyup', function(event) {
                             field["personalityQuizReplaceLabel"] = jQuery(this).val();
@@ -263,6 +270,9 @@ if (class_exists("GFForms")) {
                 $form_settings = $this->get_form_settings($form);
                 if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
                     $classes .= " pq-question-field";
+                    if ( array_key_exists('personalityQuizShuffle', $field) && $field['personalityQuizShuffle']) {
+                        $classes .= " pq-question-shuffle";
+                    }
                 }
             }
             return $classes;

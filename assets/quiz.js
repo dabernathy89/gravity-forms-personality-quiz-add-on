@@ -24,7 +24,7 @@
 })(jQuery);
 
 jQuery(document).ready(function($) {
-    $('.pq-question-field').each(function(index, el) {
+    $('.pq-question-field.pq-question-shuffle').each(function(index, el) {
         $(this).find('.gfield_radio li, .gfield_checkbox li').shuffle();
     });
 });
