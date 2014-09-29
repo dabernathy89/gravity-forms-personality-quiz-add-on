@@ -41,6 +41,7 @@
     padding-left: 35px !important;
     margin: 0;
     cursor: pointer;
+    display: block;
 }
 
 .gform_wrapper li.pq-question-field ul.gfield_radio > li input[type="radio"],
