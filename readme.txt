@@ -24,8 +24,32 @@ You can build two types of quizzes: numeric and multiple choice. The result for 
 
 **Multiple choice** quizzes produce a text result rather than a numeric result. The add-on will check to see which value among the inputs was selected most often by the user, and will return that value as the quiz result. Ties will be broken randomly.
 
+= Quiz Styling =
+
+The add-on includes some basic, optional styles. You can turn these on or off per-form. To enable columns for your radio and checkbox elements, use Gravity Forms' built-in CSS Ready Classes:
+
+http://www.gravityhelp.com/css-ready-classes-for-gravity-forms/
+
+= Showing Quiz Result =
+
+You will need to set up the confirmations for your quizzes using Gravity Forms' conditional logic. For numeric quizzes, you can use rules like 'greater than' and 'less than' to create confirmations based on the numeric total in the quiz result. For multiple choice quizzes, you should create one confirmation for each potential result.
+
+The quiz result is available in your confirmations and notifications as a merge tag. For numeric quizzes, you can also include the result percentage (if the user selected 15 out of 20 available points, this merge tag will return the number 75).
+
+= Contributing =
+
+You can contribute to this add-on with Github:
+
+https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
+
 == Installation ==
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+0.4 - style updates: let user define columns with GF ready classes
+
+0.3 - style update
+
+0.2 - allow quiz answer shuffling to be toggled per question
+
 0.1 - initial plugin
