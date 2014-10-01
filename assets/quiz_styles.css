@@ -22,7 +22,7 @@
 .gform_wrapper li.pq-question-field ul.gfield_radio > li,
 .gform_wrapper li.pq-question-field ul.gfield_checkbox > li {
     box-sizing: border-box;
-    padding: 5px;
+    padding: 5px !important;
     margin-top: 10px !important;
     margin-bottom: 10px !important;
     text-align: center;
@@ -60,7 +60,7 @@
 .gform_wrapper li.pq-question-field ul.gfield_radio > li input[type="radio"],
 .gform_wrapper li.pq-question-field ul.gfield_checkbox > li input[type="checkbox"] {
     position: absolute;
-    top: 10px;
+    top: 15px;
     left: 15px;
 }
 
