@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms Personality Quiz Add-On
 Description: Create personality quizzes with Gravity Forms.
-Version: 0.3
+Version: 0.4
 Author: Daniel Abernathy
 Author URI: http://www.danielabernathy.com
 License: GPLv3
@@ -28,7 +28,7 @@ if (class_exists("GFForms")) {
 
     class GravityFormsPersonalityQuizAddon extends GFAddOn {
 
-        protected $_version = "0.1";
+        protected $_version = "0.4";
         protected $_min_gravityforms_version = "1.8.7";
         protected $_slug = "gf-personality-quiz";
         protected $_path = "gravity-forms-personality-quiz-addon/class-gravity-forms-personality-quiz-addon.php";
