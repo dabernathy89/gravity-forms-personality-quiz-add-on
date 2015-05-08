@@ -74,6 +74,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+0.6 - improve documentation; new method for scoring to allow GF to store quiz results
+
 0.4 - style updates: let user define columns with GF ready classes
 
 0.3 - style update
