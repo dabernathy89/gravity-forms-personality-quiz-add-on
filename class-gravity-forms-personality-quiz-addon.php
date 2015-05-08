@@ -160,6 +160,23 @@ if (class_exists("GFForms")) {
             return $score;
         }
 
+        protected function extract_field_score($value) {
+            // The score can be defined by ending the value with curly braces
+            // and a number between them - e.g. {3}
+            if ( strpos($value, '}') === (strlen($value) - 1) ) {
+                $last_curly = strrpos($value,'{');
+                $value = substr($value, $last_curly);
+                $value = trim($value,"{}");
+            }
+
+            // If the value is just a number, return it
+            if (ctype_digit($value)) {
+                return intval($value);
+            }
+
+            return 0;
+        }
+
         public function add_enable_checkbox($position, $form_id) {
             $form = GFAPI::get_form($form_id);
             $form_settings = $this->get_form_settings($form);
