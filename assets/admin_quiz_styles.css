@@ -10,6 +10,14 @@
     width: 145px !important;
 }
 
+#gfield_settings_choices_container .gfield_choice_header_label {
+    padding-left: 70px !important;
+}
+
+#gfield_settings_choices_container .gfield_choice_header_value {
+    padding-left: 115px !important;
+}
+
 .pq-choice-media-upload {
     margin-top: 4px;
     margin-right: 5px;
