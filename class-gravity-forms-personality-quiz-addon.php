@@ -124,16 +124,35 @@ if (class_exists("GFForms")) {
         protected function score_quiz_numeric($form_settings, $fields, $lead) {
             $score = 0;
             foreach ($fields as $field) {
-                if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
-                    if ($field['type'] === "checkbox") {
-                        foreach ($field['inputs'] as $input) {
-                            if (array_key_exists($input['id'], $lead)) {
-                                $score += intval($lead[$input['id']]);
+
+                // newer GF uses objects instead of arrays
+
+                if (is_array($field)) {
+                    if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
+                        if ($field['type'] === "checkbox") {
+                            foreach ($field['inputs'] as $input) {
+                                if (array_key_exists($input['id'], $lead)) {
+                                    $score += $this->extract_field_score($lead[$input['id']]);
+                                }
+                            }
+                        } else if ($field['type'] === "radio" ) {
+                            if (array_key_exists($field['id'], $lead)) {
+                                $score += $this->extract_field_score($lead[$field['id']]);
                             }
                         }
-                    } else if ($field['type'] === "radio" ) {
-                        if (array_key_exists($field['id'], $lead)) {
-                            $score += intval($lead[$field['id']]);
+                    }
+                } else {
+                    if (property_exists($field, 'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
+                        if ($field->type === "checkbox") {
+                            foreach ($field->inputs as $input) {
+                                if (array_key_exists($input['id'], $lead)) {
+                                    $score += $this->extract_field_score($lead[$input['id']]);
+                                }
+                            }
+                        } else if ($field->type === "radio" ) {
+                            if (array_key_exists($field->id, $lead)) {
+                                $score += $this->extract_field_score($lead[$field['id']]);
+                            }
                         }
                     }
                 }
