@@ -83,3 +83,10 @@ Install from the WordPress dashboard, or upload the unzipped folder to your plug
 0.2 - allow quiz answer shuffling to be toggled per question
 
 0.1 - initial plugin
+
+== Screenshots ==
+
+1. The quiz settings for the whole form
+2. Sample settings for a field in a numeric quiz
+3. Sample settings for a field in a multiple choice quiz
+2. Using the quiz result in a confirmation shortcode or confirmation conditional logic
