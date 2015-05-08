@@ -301,8 +301,8 @@ if (class_exists("GFForms")) {
             ?>
 
             <script type="text/javascript">
-                gform.addFilter("gform_merge_tags", "add_merge_tags");
-                function add_merge_tags(mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option){
+                gform.addFilter("gform_merge_tags", "add_personality_quiz_merge_tags");
+                function add_personality_quiz_merge_tags(mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option){
                     mergeTags["custom"].tags.push({ tag: '{personality_quiz_result}', label: 'Personality Quiz Result' });
                     mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_percent}', label: 'Personality Quiz Result Percent' });
 
