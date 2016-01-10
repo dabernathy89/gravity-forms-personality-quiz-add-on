@@ -2,7 +2,7 @@
 Contributors: dabernathy89
 Tags: gravity forms, quiz
 Requires at least: 3.9
-Tested up to: 4.0
+Tested up to: 4.4
 Stable tag: 0.7
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
