@@ -2,8 +2,8 @@
 - Contributors: dabernathy89
 - Tags: gravity forms, quiz
 - Requires at least: 3.9
-- Tested up to: 4.0
-- Stable tag: 0.6
+- Tested up to: 4.4
+- Stable tag: 0.7
 - License: GPLv3
 - License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -74,6 +74,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 ### Changelog
+0.7 - access $field as object instead of array; fixes bug in calculating score percentage of total
+
 0.6 - improve documentation; new method for scoring to allow GF to store quiz results
 
 0.4 - style updates: let user define columns with GF ready classes
