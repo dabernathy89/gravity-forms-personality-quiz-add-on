@@ -97,16 +97,16 @@ if (class_exists("GFForms")) {
             $quiz_questions = array();
 
             foreach ($fields as $field) {
-                if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
-                    if ($field['type'] === "checkbox") {
-                        foreach ($field['inputs'] as $input) {
+                if (property_exists($field, 'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
+                    if ($field->type === "checkbox") {
+                        foreach ($field->inputs as $input) {
                             if (array_key_exists($input['id'], $lead) && !empty($lead[$input['id']])) {
                                 $quiz_questions[] = $lead[$input['id']];
                             }
                         }
-                    } else if ($field['type'] === "radio" ) {
-                        if (array_key_exists($field['id'], $lead) && !empty($lead[$field['id']])) {
-                            $quiz_questions[] = $lead[$field['id']];
+                    } else if ($field->type === "radio" ) {
+                        if (array_key_exists($field->id, $lead) && !empty($lead[$field->id])) {
+                            $quiz_questions[] = $lead[$field->id];
                         }
                     }
                 }
@@ -128,16 +128,16 @@ if (class_exists("GFForms")) {
                 // newer GF uses objects instead of arrays
 
                 if (is_array($field)) {
-                    if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
-                        if ($field['type'] === "checkbox") {
-                            foreach ($field['inputs'] as $input) {
+                    if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
+                        if ($field->type === "checkbox") {
+                            foreach ($field->inputs as $input) {
                                 if (array_key_exists($input['id'], $lead)) {
                                     $score += $this->extract_field_score($lead[$input['id']]);
                                 }
                             }
-                        } else if ($field['type'] === "radio" ) {
-                            if (array_key_exists($field['id'], $lead)) {
-                                $score += $this->extract_field_score($lead[$field['id']]);
+                        } else if ($field->type === "radio" ) {
+                            if (array_key_exists($field->id, $lead)) {
+                                $score += $this->extract_field_score($lead[$field->id]);
                             }
                         }
                     }
@@ -151,7 +151,7 @@ if (class_exists("GFForms")) {
                             }
                         } else if ($field->type === "radio" ) {
                             if (array_key_exists($field->id, $lead)) {
-                                $score += $this->extract_field_score($lead[$field['id']]);
+                                $score += $this->extract_field_score($lead[$field->id]);
                             }
                         }
                     }
@@ -289,11 +289,11 @@ if (class_exists("GFForms")) {
         }
 
         public function replace_field_labels($content, $field, $value, $lead_id, $form_id) {
-            if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz'] && array_key_exists('personalityQuizReplaceLabel', $field) && $field['personalityQuizReplaceLabel']) {
+            if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz && property_exists($field,'personalityQuizReplaceLabel') && $field->personalityQuizReplaceLabel) {
                 $form = GFAPI::get_form($form_id);
                 $form_settings = $this->get_form_settings($form);
                 if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
-                    $content = str_replace($field['label'], $field['personalityQuizReplaceLabel'], $content);
+                    $content = str_replace($field->label, $field->personalityQuizReplaceLabel, $content);
                     $content = str_replace('gfield_label', 'gfield_label gfield_image_label', $content);
                 }
             }
@@ -302,11 +302,11 @@ if (class_exists("GFForms")) {
         }
 
         public function add_class_to_quiz_questions($classes, $field, $form) {
-            if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
+            if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
                 $form_settings = $this->get_form_settings($form);
                 if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
                     $classes .= " pq-question-field";
-                    if ( array_key_exists('personalityQuizShuffle', $field) && $field['personalityQuizShuffle']) {
+                    if ( property_exists($field,'personalityQuizShuffle') && $field->personalityQuizShuffle) {
                         $classes .= " pq-question-shuffle";
                     }
                 }
@@ -352,9 +352,9 @@ if (class_exists("GFForms")) {
             $total = 0;
 
             foreach ($form['fields'] as $field) {
-                if (array_key_exists('enablePersonalityQuiz', $field) && $field['enablePersonalityQuiz']) {
-                    foreach ($field['choices'] as $choice) {
-                        $total += (int)$choice['value'];
+                if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
+                    foreach ($field->choices as $choice) {
+                        $total += (int)$this->extract_field_score($choice['value']);
                     }
                 }
             }
