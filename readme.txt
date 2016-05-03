@@ -1,9 +1,13 @@
 === Gravity Forms Personality Quiz Add-On ===
 Contributors: dabernathy89
+Author: Daniel Abernathy
+Author URI: https://www.danielabernathy.com
+Donate link: https://www.paypal.me/DanielAbernathy
 Tags: gravity forms, quiz
 Requires at least: 3.9
-Tested up to: 4.4
-Stable tag: 0.7
+Tested up to: 4.5.1
+Stable tag: 0.8
+Version: 0.8
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -74,6 +78,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+0.8 - Bug fix: allow quiz result to be exported with entries; Bug fix: field label images now work properly
+
 0.7 - access $field as object instead of array; fixes bug in calculating score percentage of total
 
 0.6 - improve documentation; new method for scoring to allow GF to store quiz results
