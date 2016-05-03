@@ -210,7 +210,7 @@ if (class_exists("GFForms")) {
                         jQuery("#field_personality_quiz_shuffle").attr("checked", field["personalityQuizShuffle"] == true);
                         jQuery("#field_personality_quiz_replace_label").val(field["personalityQuizReplaceLabel"]);
                         jQuery("#field_personality_quiz_replace_label").on('change blur keyup', function(event) {
-                            field["personalityQuizReplaceLabel"] = jQuery(this).val();
+                            SetFieldProperty('personalityQuizReplaceLabel',jQuery(this).val());
                         });
                     });
 
