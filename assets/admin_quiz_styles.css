@@ -24,7 +24,7 @@
     cursor: pointer;
 }
 
-.gfield_image_label img {
+.gfield_image_label img, .gfield_radio img, .gfield_checkbox img {
     max-width: 100%;
     height: auto;
 }
