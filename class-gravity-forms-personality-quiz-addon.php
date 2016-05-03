@@ -41,7 +41,6 @@ if (class_exists("GFForms")) {
 
             add_action("gform_field_standard_settings", array($this, "add_enable_checkbox"), 10, 2);
             add_action("gform_editor_js", array($this, "editor_script"));
-            add_filter("gform_entry_meta", array($this, "quiz_result_meta"), 10, 2);
             add_filter("gform_enqueue_scripts", array($this, "enqueue_quiz_styles"), 10, 2);
             add_filter("gform_field_content", array($this, "replace_field_labels"), 10, 5);
             add_action("gform_field_css_class", array($this, "add_class_to_quiz_questions"), 10, 3);
@@ -49,7 +48,7 @@ if (class_exists("GFForms")) {
             add_filter("gform_replace_merge_tags", array($this, "replace_merge_tags"), 10, 7);
         }
 
-        public function quiz_result_meta($entry_meta, $form_id) {
+        public function get_entry_meta($entry_meta, $form_id) {
             $form = GFAPI::get_form($form_id);
             $form_settings = $this->get_form_settings($form);
 
