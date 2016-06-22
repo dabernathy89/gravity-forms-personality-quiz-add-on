@@ -302,6 +302,7 @@ if (class_exists("GFForms")) {
                 function add_personality_quiz_merge_tags(mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option){
                     mergeTags["custom"].tags.push({ tag: '{personality_quiz_result}', label: 'Personality Quiz Result' });
                     mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_percent}', label: 'Personality Quiz Result Percent' });
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_average}', label: 'Personality Quiz Result Average' });
 
                     return mergeTags;
                 }
@@ -325,6 +326,13 @@ if (class_exists("GFForms")) {
                 $text = str_replace('{personality_quiz_result_percent}', $quiz_result, $text);
             }
 
+            if(strpos($text, '{personality_quiz_result_average}') !== false) {
+                $quiz_result = (int)gform_get_meta($entry['id'], 'personality_quiz_result');
+                $num_questions = $this->get_num_questions($form);
+                $quiz_result = round($quiz_result / $num_questions);
+                $text = str_replace('{personality_quiz_result_average}', $quiz_result, $text);
+            }
+
             return $text;
         }
 
@@ -340,6 +348,18 @@ if (class_exists("GFForms")) {
             }
 
             return $total;
+        }
+
+        protected function get_num_questions($form) {
+            $num_questions = 0;
+
+            foreach ($form['fields'] as $field) {
+                if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
+                    $num_questions += 1;
+                }
+            }
+
+            return $num_questions;
         }
 
     }
