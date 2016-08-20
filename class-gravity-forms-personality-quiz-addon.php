@@ -2,7 +2,7 @@
 /*
 Plugin Name: Gravity Forms Personality Quiz Add-On
 Description: Create personality quizzes with Gravity Forms.
-Version: 0.8
+Version: 0.9
 Author: Daniel Abernathy
 Author URI: http://www.danielabernathy.com
 License: GPLv3
