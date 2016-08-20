@@ -6,8 +6,8 @@
 - Tags: gravity forms, quiz
 - Requires at least: 3.9
 - Tested up to: 4.5.1
-- Stable tag: 0.8
-- Version: 0.8
+- Stable tag: 0.9
+- Version: 0.9
 - License: GPLv3
 - License URI: http://www.gnu.org/licenses/gpl.html
 
