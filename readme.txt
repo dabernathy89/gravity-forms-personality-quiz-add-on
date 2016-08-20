@@ -1,5 +1,5 @@
 === Gravity Forms Personality Quiz Add-On ===
-Contributors: dabernathy89
+Contributors: dabernathy89, collinmanderson
 Author: Daniel Abernathy
 Author URI: https://www.danielabernathy.com
 Donate link: https://www.paypal.me/DanielAbernathy
@@ -64,7 +64,7 @@ http://www.gravityhelp.com/css-ready-classes-for-gravity-forms/
 
 = Showing Quiz Result =
 
-The quiz result is available in your confirmations and notifications as a merge tag. For numeric quizzes, you can also include the result percentage (if the user selected 15 out of 20 available points, this merge tag will return the number 75).
+The quiz result is available in your confirmations and notifications as a merge tag. For numeric quizzes, you can also include the result percentage (calculated from the total available points in the quiz) or the result average (points per question in the quiz).
 
 To set up different confirmations or notifications depending on the quiz results, you will need to use Gravity Forms' conditional logic. For numeric quizzes, you can use rules like 'greater than' and 'less than' to create confirmations based on the numeric total in the quiz result. For multiple choice quizzes, you should create one confirmation for each potential result (e.g., a confirmation for "apple" and a confirmation for "orange").
 
@@ -78,6 +78,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+0.9 - New feature: display average result for numeric quizzes (contributed by collinmanderson)
+
 0.8 - Bug fix: allow quiz result to be exported with entries; Bug fix: field label images now work properly
 
 0.7 - access $field as object instead of array; fixes bug in calculating score percentage of total
