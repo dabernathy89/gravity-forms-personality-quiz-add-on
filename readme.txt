@@ -5,9 +5,9 @@ Author URI: https://www.danielabernathy.com
 Donate link: https://www.paypal.me/DanielAbernathy
 Tags: gravity forms, quiz
 Requires at least: 3.9
-Tested up to: 4.5.1
-Stable tag: 0.9
-Version: 0.9
+Tested up to: 4.6
+Stable tag: 1.0.0
+Version: 1.0.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -78,6 +78,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+1.0.0 - The plugin now registers correctly with the latest versions of WordPress and Gravity Forms. Because files are renamed in this release, the plugin will automatically deactivate upon updating. You will need to reactivate it.
+
 0.9 - New feature: display average result for numeric quizzes (contributed by collinmanderson)
 
 0.8 - Bug fix: allow quiz result to be exported with entries; Bug fix: field label images now work properly
