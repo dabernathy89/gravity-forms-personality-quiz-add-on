@@ -6,7 +6,7 @@ GFForms::include_addon_framework();
 
 class GravityFormsPersonalityQuizAddon extends GFAddOn {
 
-    protected $_version = "1.0.0";
+    protected $_version = "1.1.0";
     protected $_min_gravityforms_version = "2.0";
     protected $_slug = "gf-personality-quiz";
     protected $_path = "gravity-forms-personality-quiz-addon/class-gravity-forms-personality-quiz-addon.php";
