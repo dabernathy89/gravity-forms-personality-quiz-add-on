@@ -32,6 +32,21 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         add_action("gform_field_css_class", array($this, "add_class_to_quiz_questions"), 10, 3);
         add_action("gform_admin_pre_render", array($this, "add_merge_tags"));
         add_filter("gform_replace_merge_tags", array($this, "replace_merge_tags"), 10, 7);
+        add_filter("gform_entry_post_save", array($this, "replace_merge_tags_in_form_fields"), 10, 2);
+    }
+
+    public function replace_merge_tags_in_form_fields( $entry, $form ) {
+        $quiz_result = gform_get_meta($entry['id'], 'personality_quiz_result');
+
+        foreach ($entry as $key => $value) {
+            if( strpos($value, '{personality_quiz_result}') !== false
+                || strpos($value, '{personality_quiz_result_percent}') !== false
+                || strpos($value, '{personality_quiz_result_average}') !== false){
+                    $entry[$key] = GFCommon::replace_variables( $value, $form, $entry );
+                    GFAPI::update_entry_field( $entry['id'], $key, $entry[$key] );
+            }
+        }
+        return $entry;
     }
 
     public function get_entry_meta($entry_meta, $form_id) {
@@ -299,6 +314,9 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
     }
 
     public function replace_merge_tags($text, $form, $entry, $url_encode, $esc_html, $nl2br, $format) {
+        if ( ! $entry ) {
+            return $text;
+        }
 
         if(strpos($text, '{personality_quiz_result}') !== false) {
             $quiz_result = gform_get_meta($entry['id'], 'personality_quiz_result');
