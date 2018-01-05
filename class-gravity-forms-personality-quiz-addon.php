@@ -15,6 +15,8 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
     protected $_short_title = "Personality Quiz Add-On";
     private static $_instance;
 
+    protected $quiz_types = array('Numeric', 'Numeric (multiple categories)', 'Multiple Choice');
+
     public static function get_instance() {
         if ( self::$_instance == null ) {
             self::$_instance = new GravityFormsPersonalityQuizAddon();
@@ -39,9 +41,9 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         $quiz_result = gform_get_meta($entry['id'], 'personality_quiz_result');
 
         foreach ($entry as $key => $value) {
-            if( strpos($value, '{personality_quiz_result}') !== false
-                || strpos($value, '{personality_quiz_result_percent}') !== false
-                || strpos($value, '{personality_quiz_result_average}') !== false){
+            if( strpos($value, '{personality_quiz_result') !== false
+                || strpos($value, '{personality_quiz_result_percent') !== false
+                || strpos($value, '{personality_quiz_result_average') !== false){
                     $entry[$key] = GFCommon::replace_variables( $value, $form, $entry );
                     GFAPI::update_entry_field( $entry['id'], $key, $entry[$key] );
             }
@@ -54,7 +56,17 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         $form_settings = $this->get_form_settings($form);
 
         if (!empty($form_settings)) {
-            if ($form_settings['quiz_type'] === "Numeric") {
+            if ($form_settings['quiz_type'] === "Numeric (multiple categories)") {
+                foreach ($this->get_numeric_quiz_categories($form) as $category) {
+                    $entry_meta['personality_quiz_result[' . $category . ']'] = array(
+                        'label' => 'Quiz Result (' . $category . ')',
+                        'is_numeric' => true,
+                        'update_entry_meta_callback' => array($this,'update_quiz_result'),
+                        'is_default_column' => true,
+                        'filter' => true
+                    );
+                }
+            } else if ($form_settings['quiz_type'] === "Numeric") {
                 $entry_meta['personality_quiz_result'] = array(
                     'label' => 'Quiz Result',
                     'is_numeric' => true,
@@ -78,13 +90,16 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
 
     public function update_quiz_result($key, $lead, $form) {
         $form_settings = $this->get_form_settings($form);
+        $key = str_replace('personality_quiz_result[', '', $key);
+        $key = str_replace(']', '', $key);
+        $key = str_replace('personality_quiz_result', '', $key);
 
-        if (empty($form_settings) || !in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
+        if (empty($form_settings) || !in_array($form_settings['quiz_type'], $this->quiz_types)) {
             return;
         }
 
-        if ($form_settings['quiz_type'] === "Numeric") {
-            $quiz_result = $this->score_quiz_numeric($form_settings, $form['fields'], $lead);
+        if ($form_settings['quiz_type'] === "Numeric" || $form_settings['quiz_type'] === "Numeric (multiple categories)") {
+            $quiz_result = $this->score_quiz_numeric($form_settings, $form['fields'], $lead, $key);
         } else {
             $quiz_result = $this->score_quiz_multiple_choice($form_settings, $form['fields'], $lead);
         }
@@ -121,19 +136,19 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         return $winners[0];
     }
 
-    protected function score_quiz_numeric($form_settings, $fields, $lead) {
+    protected function score_quiz_numeric($form_settings, $fields, $lead, $key = '') {
         $score = 0;
         foreach ($fields as $field) {
             if (property_exists($field, 'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
                 if ($field->type === "checkbox") {
                     foreach ($field->inputs as $input) {
                         if (array_key_exists($input['id'], $lead)) {
-                            $score += $this->extract_field_score($lead[$input['id']]);
+                            $score += $this->extract_field_score($lead[$input['id']], $key);
                         }
                     }
                 } else if ($field->type === "radio" ) {
                     if (array_key_exists($field->id, $lead)) {
-                        $score += $this->extract_field_score($lead[$field->id]);
+                        $score += $this->extract_field_score($lead[$field->id], $key);
                     }
                 }
             }
@@ -141,18 +156,19 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         return $score;
     }
 
-    protected function extract_field_score($value) {
+    protected function extract_field_score($value, $key = '') {
         // The score can be defined by ending the value with curly braces
         // and a number between them - e.g. {3}
-        if ( strpos($value, '}') === (strlen($value) - 1) ) {
-            $last_curly = strrpos($value,'{');
-            $value = substr($value, $last_curly);
-            $value = trim($value,"{}");
-        }
-
-        // If the value is just a number, return it
-        if (ctype_digit($value)) {
-            return intval($value);
+        // Multiple possible; e.g. a{2},b{1}
+        $values = array_map('trim', explode(',', $value));
+        foreach ($values as $single_value) {
+            if (preg_match('/([^\s,]*?){([\d]+)}/', $single_value, $matches)) {
+                // If there's no key specified, just return the first number inside curly braces
+                // If there is a key specified, return the one that matches for that key only
+                if (!$key || ($key && $matches[1] === $key)) {
+                    return (int)$matches[2];
+                }
+            }
         }
 
         return 0;
@@ -161,7 +177,7 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
     public function add_enable_checkbox($position, $form_id) {
         $form = GFAPI::get_form($form_id);
         $form_settings = $this->get_form_settings($form);
-        if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
+        if (!empty($form_settings) && in_array($form_settings['quiz_type'], $this->quiz_types)) {
             if($position == 25){
                 ?>
                 <li class="enable_personality_quiz field_setting">
@@ -195,7 +211,7 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         $form_id = $_GET['id'];
         $form = GFAPI::get_form($form_id);
         $form_settings = $this->get_form_settings($form);
-        if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
+        if (!empty($form_settings) && in_array($form_settings['quiz_type'], $this->quiz_types)) {
             wp_enqueue_media();
             wp_enqueue_style( 'gf-personality-quiz-styles', plugins_url( 'assets/admin_quiz_styles.css' , __FILE__ ), array(), $this->_version );
             ?>
@@ -240,6 +256,9 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
                                 "label" => "Numeric"
                             ),
                             array(
+                                "label" => "Numeric (multiple categories)"
+                            ),
+                            array(
                                 "label" => "Multiple Choice"
                             )
                         )
@@ -273,7 +292,7 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz && property_exists($field,'personalityQuizReplaceLabel') && $field->personalityQuizReplaceLabel) {
             $form = GFAPI::get_form($form_id);
             $form_settings = $this->get_form_settings($form);
-            if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
+            if (!empty($form_settings) && in_array($form_settings['quiz_type'], $this->quiz_types)) {
                 $content = str_replace($field->label, $field->personalityQuizReplaceLabel, $content);
                 $content = str_replace('gfield_label', 'gfield_label gfield_image_label', $content);
             }
@@ -285,7 +304,7 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
     public function add_class_to_quiz_questions($classes, $field, $form) {
         if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
             $form_settings = $this->get_form_settings($form);
-            if (!empty($form_settings) && in_array($form_settings['quiz_type'], array('Numeric', 'Multiple Choice'))) {
+            if (!empty($form_settings) && in_array($form_settings['quiz_type'], $this->quiz_types)) {
                 $classes .= " pq-question-field";
                 if ( property_exists($field,'personalityQuizShuffle') && $field->personalityQuizShuffle) {
                     $classes .= " pq-question-shuffle";
@@ -296,14 +315,23 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
     }
 
     public function add_merge_tags($form) {
+        $form_settings = $this->get_form_settings($form);
         ?>
 
         <script type="text/javascript">
             gform.addFilter("gform_merge_tags", "add_personality_quiz_merge_tags");
             function add_personality_quiz_merge_tags(mergeTags, elementId, hideAllFields, excludeFieldTypes, isPrepop, option){
-                mergeTags["custom"].tags.push({ tag: '{personality_quiz_result}', label: 'Personality Quiz Result' });
-                mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_percent}', label: 'Personality Quiz Result Percent' });
-                mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_average}', label: 'Personality Quiz Result Average' });
+                <?php if (isset($form_settings['quiz_type']) && $form_settings['quiz_type'] === "Numeric (multiple categories)") : ?>
+                    <?php foreach ($this->get_numeric_quiz_categories($form) as $category) : ?>
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result[<?php echo $category; ?>]}', label: 'Personality Quiz Result (<?php echo $category; ?>)' });
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_percent[<?php echo $category; ?>]}', label: 'Personality Quiz Result Percent (<?php echo $category; ?>)' });
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_average[<?php echo $category; ?>]}', label: 'Personality Quiz Result Average (<?php echo $category; ?>)' });
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result}', label: 'Personality Quiz Result' });
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_percent}', label: 'Personality Quiz Result Percent' });
+                    mergeTags["custom"].tags.push({ tag: '{personality_quiz_result_average}', label: 'Personality Quiz Result Average' });
+                <?php endif; ?>
 
                 return mergeTags;
             }
@@ -318,35 +346,37 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
             return $text;
         }
 
-        if(strpos($text, '{personality_quiz_result}') !== false) {
-            $quiz_result = gform_get_meta($entry['id'], 'personality_quiz_result');
-            $text = str_replace('{personality_quiz_result}', $quiz_result, $text);
-        }
+        $matches = [];
+        if (preg_match_all('/{(personality_quiz_result\w*)(?>\[(\w*)\])?}/', $text, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                $key = empty($match[2]) ? '' : '[' . $match[2] . ']';
+                $quiz_result = gform_get_meta($entry['id'], 'personality_quiz_result' . $key);
+                $text = str_replace("{personality_quiz_result{$key}}", $quiz_result, $text);
 
-        if(strpos($text, '{personality_quiz_result_percent}') !== false) {
-            $quiz_result = (int)gform_get_meta($entry['id'], 'personality_quiz_result');
-            $quiz_total = $this->get_quiz_total($form);
-            $quiz_result = round(($quiz_result / $quiz_total) * 100);
-            $text = str_replace('{personality_quiz_result_percent}', $quiz_result, $text);
-        }
+                if ($match[1] === 'personality_quiz_result_percent') {
+                    $quiz_total = $this->get_quiz_total($form, $match[2]);
+                    $quiz_result = round(($quiz_result / $quiz_total) * 100);
+                    $text = str_replace("{personality_quiz_result_percent{$key}}", $quiz_result, $text);
+                }
 
-        if(strpos($text, '{personality_quiz_result_average}') !== false) {
-            $quiz_result = (int)gform_get_meta($entry['id'], 'personality_quiz_result');
-            $num_questions = $this->get_num_questions($form);
-            $quiz_result = round($quiz_result / $num_questions);
-            $text = str_replace('{personality_quiz_result_average}', $quiz_result, $text);
+                if ($match[1] === 'personality_quiz_result_average') {
+                    $num_questions = $this->get_num_questions($form, $match[2]);
+                    $quiz_result = round($quiz_result / $num_questions);
+                    $text = str_replace("{personality_quiz_result_average{$key}}", $quiz_result, $text);
+                }
+            }
         }
 
         return $text;
     }
 
-    protected function get_quiz_total($form) {
+    protected function get_quiz_total($form, $key = '') {
         $total = 0;
 
         foreach ($form['fields'] as $field) {
             if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
                 foreach ($field->choices as $choice) {
-                    $total += (int)$this->extract_field_score($choice['value']);
+                    $total += (int)$this->extract_field_score($choice['value'], $key);
                 }
             }
         }
@@ -354,18 +384,46 @@ class GravityFormsPersonalityQuizAddon extends GFAddOn {
         return $total;
     }
 
-    protected function get_num_questions($form) {
+    protected function get_num_questions($form, $key = '') {
         $num_questions = 0;
 
         foreach ($form['fields'] as $field) {
             if (property_exists($field,'enablePersonalityQuiz') && $field->enablePersonalityQuiz) {
-                $num_questions += 1;
+                if ($key) {
+                    foreach ($field->choices as $choice) {
+                        if (strpos($choice['value'], $key . '{') !== false) {
+                            $num_questions += 1;
+                            break;
+                        }
+                    }
+                } else {
+                    $num_questions += 1;
+                }
             }
         }
 
         return $num_questions;
     }
 
+    protected function get_numeric_quiz_categories($form) {
+        $categories = [];
+
+        foreach ($form['fields'] as $field) {
+            if (!property_exists($field,'enablePersonalityQuiz') || !$field->enablePersonalityQuiz) {
+                continue;
+            }
+            foreach ($field->choices as $choice) {
+                $potential_categories = explode(',', $choice['value']);
+                foreach ($potential_categories as $potential_category) {
+                    if (preg_match('/([^\s,]*?){([\d]+)}/', $potential_category, $matches)) {
+                        $categories[] = trim($matches[1]);
+                    }
+                }
+            }
+        }
+
+        return array_unique($categories);
+    }
 }
 
 endif;
