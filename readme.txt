@@ -33,6 +33,8 @@ You can build two types of quizzes: *numeric* and *multiple choice*. Numeric qui
 
 **Multiple choice** quizzes will check to see which value among the inputs was selected most often by the user, and will return that value as the quiz result. Ties will be broken randomly. A multiple choice quiz might ask "Which country should you travel to next?", where the answers to each question correspond to a country.
 
+**Numeric quizzes with multiple categories** will calculate point totals like a numeric quiz, but into different categories. There is no single winner as in a "multiple choice" quiz, but simply different totals for separate categories. A multiple choice quiz might also ask "Which country should you travel to next?", but instead of returning a single result, it will return the number of "points" you scored for each country.
+
 = Setting up your quiz =
 
 1. Enable the quiz in the "Personality Quiz Settings" menu under "Form Settings". This is where you select whether this quiz will be numeric or multiple choice.
@@ -52,6 +54,16 @@ Numeric quizzes simply add numbers to produce a total. If you don't care about s
 
 my-field-value{1}
 
+**Numeric Values - Multiple Categories**
+
+For these results, each radio/checkbox answer must use the format `category-name{score}`, where `score` is a point value. For example:
+
+Label: Apple
+Value: apple{1}
+
+Label: Banana
+Value: banana{1}
+
 **Multiple Choice Values**
 
 Multiple choice quizzes are meant to determine which choice a user picks most often. Usually, each question in a multiple choice quiz will contain an input corresponding to each choice. A quiz to determine whether you prefer apples or oranges, for example, would have an input with the value "apple" in each question and an input with the value "orange" in question.
@@ -66,6 +78,8 @@ http://www.gravityhelp.com/css-ready-classes-for-gravity-forms/
 
 The quiz result is available in your confirmations and notifications as a merge tag. For numeric quizzes, you can also include the result percentage (calculated from the total available points in the quiz) or the result average (points per question in the quiz).
 
+For numeric quizzes with multiple categories, you will see multiple merge tags for each category; each one with a total, percentage of total, and average.
+
 To set up different confirmations or notifications depending on the quiz results, you will need to use Gravity Forms' conditional logic. For numeric quizzes, you can use rules like 'greater than' and 'less than' to create confirmations based on the numeric total in the quiz result. For multiple choice quizzes, you should create one confirmation for each potential result (e.g., a confirmation for "apple" and a confirmation for "orange").
 
 = Contributing =
@@ -78,6 +92,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 == Changelog ==
+1.1.1 - Code cleanup
+
 1.1.0 - New feature: you can use the quiz merge tags in other form fields (such as hidden fields) now. This is useful for in conjunction with add-ons that use field values for conditional logic but do not support merge tags.
 
 1.0.0 - The plugin now registers correctly with the latest versions of WordPress and Gravity Forms. Because files are renamed in this release, the plugin will automatically deactivate upon updating. You will need to reactivate it.
