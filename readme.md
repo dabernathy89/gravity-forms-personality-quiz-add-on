@@ -5,9 +5,9 @@
 - Donate link: https://www.paypal.me/DanielAbernathy
 - Tags: gravity forms, quiz
 - Requires at least: 3.9
-- Tested up to: 4.6
-- Stable tag: 1.1.0
-- Version: 1.1.0
+- Tested up to: 5.4
+- Stable tag: 1.1.1
+- Version: 1.1.1
 - License: GPLv3
 - License URI: http://www.gnu.org/licenses/gpl.html
 
