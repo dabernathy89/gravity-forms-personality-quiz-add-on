@@ -180,7 +180,7 @@ if ( class_exists( 'GFForms' ) ) :
 					// If there's no key specified, just return the first number inside curly braces.
 					// If there is a key specified, return the one that matches for that key only.
 					if ( ! $key || ( $key && $matches[1] === $key ) ) {
-						return (int) $matches[2];
+						return (int) ( $matches[2] ?? 0 );
 					}
 				}
 			}
@@ -378,13 +378,13 @@ if ( class_exists( 'GFForms' ) ) :
 					$text        = str_replace( "{personality_quiz_result{$key}}", $quiz_result, $text );
 
 					if ( 'personality_quiz_result_percent' === $match[1] ) {
-						$quiz_total  = $this->get_quiz_total( $form, $match[2] );
+						$quiz_total  = $this->get_quiz_total( $form, $match[2] ?? '' );
 						$quiz_result = round( ( $quiz_result / $quiz_total ) * 100 );
 						$text        = str_replace( "{personality_quiz_result_percent{$key}}", $quiz_result, $text );
 					}
 
 					if ( 'personality_quiz_result_average' === $match[1] ) {
-						$num_questions = $this->get_num_questions( $form, $match[2] );
+						$num_questions = $this->get_num_questions( $form, $match[2] ?? '' );
 						$quiz_result   = round( $quiz_result / $num_questions );
 						$text          = str_replace( "{personality_quiz_result_average{$key}}", $quiz_result, $text );
 					}
