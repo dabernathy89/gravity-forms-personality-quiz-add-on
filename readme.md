@@ -6,8 +6,8 @@
 - Tags: gravity forms, quiz
 - Requires at least: 3.9
 - Tested up to: 5.4
-- Stable tag: 1.1.1
-- Version: 1.1.1
+- Stable tag: 1.1.2
+- Version: 1.1.2
 - License: GPLv3
 - License URI: http://www.gnu.org/licenses/gpl.html
 
@@ -56,13 +56,16 @@ my-field-value{1}
 
 **Numeric Values - Multiple Categories**
 
-For these results, each radio/checkbox answer must use the format `category-name{score}`, where `score` is a point value. For example:
+For these results, each radio/checkbox answer must use the format `category-name{score}`, where `score` is a point value. A single checkbox or radio may add points to multiple categories. See examples:
 
 Label: Apple
 Value: apple{1}
 
 Label: Banana
 Value: banana{1}
+
+Label: Fruit Bowl
+Value: apple{1},banana{1},strawberry{1}
 
 **Multiple Choice Values**
 
@@ -90,6 +93,8 @@ https://github.com/dabernathy89/gravity-forms-personality-quiz-add-on
 Install from the WordPress dashboard, or upload the unzipped folder to your plugins directory.
 
 ### Changelog
+1.1.2 - Add overall result for numeric quizzes with multiple categories
+
 1.1.1 - Code cleanup
 
 1.1.0 - New feature: you can use the quiz merge tags in other form fields (such as hidden fields) now. This is useful for in conjunction with add-ons that use field values for conditional logic but do not support merge tags.
