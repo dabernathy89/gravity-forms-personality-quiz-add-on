@@ -72,6 +72,13 @@ if ( class_exists( 'GFForms' ) ) :
 
 			if ( ! empty( $form_settings ) ) {
 				if ( 'Numeric (multiple categories)' === $form_settings['quiz_type'] ) {
+					$entry_meta['personality_quiz_result'] = array(
+						'label'                      => 'Quiz Result',
+						'is_numeric'                 => false,
+						'update_entry_meta_callback' => array( $this, 'update_quiz_result' ),
+						'is_default_column'          => true,
+						'filter'                     => true,
+					);
 					foreach ( $this->get_numeric_quiz_categories( $form ) as $category ) {
 						$entry_meta[ 'personality_quiz_result[' . $category . ']' ] = array(
 							'label'                      => 'Quiz Result (' . $category . ')',
@@ -105,6 +112,7 @@ if ( class_exists( 'GFForms' ) ) :
 
 		public function update_quiz_result( $key, $lead, $form ) {
 			$form_settings = $this->get_form_settings( $form );
+			$original_key  = $key;
 			$key           = str_replace( 'personality_quiz_result[', '', $key );
 			$key           = str_replace( ']', '', $key );
 			$key           = str_replace( 'personality_quiz_result', '', $key );
@@ -113,8 +121,13 @@ if ( class_exists( 'GFForms' ) ) :
 				return;
 			}
 
-			if ( 'Numeric' === $form_settings['quiz_type'] || 'Numeric (multiple categories)' === $form_settings['quiz_type'] ) {
+			if ( 'Numeric' === $form_settings['quiz_type'] ) {
 				$quiz_result = $this->score_quiz_numeric( $form_settings, $form['fields'], $lead, $key );
+			} elseif ( 'Numeric (multiple categories)' === $form_settings['quiz_type'] ) {
+				// For numeric multiple category quizzes, we have a score for each key *and* an overall score.
+				$quiz_result = 'personality_quiz_result' === $original_key
+					? $this->score_quiz_numeric_multiple_categories( $form['fields'], $lead )
+					: $this->score_quiz_numeric( $form_settings, $form['fields'], $lead, $key );
 			} else {
 				$quiz_result = $this->score_quiz_multiple_choice( $form_settings, $form['fields'], $lead );
 			}
@@ -145,6 +158,45 @@ if ( class_exists( 'GFForms' ) ) :
 			$scores = array_count_values( $quiz_questions );
 			// Return an array of just the winner - or winners if it's a tie.
 			$winners = array_keys( $scores, max( $scores ), true );
+			// Return the winner, or if it was a tie, a random winner.
+			shuffle( $winners );
+			return $winners[0];
+		}
+
+		protected function score_quiz_numeric_multiple_categories( $fields, $lead ) {
+			$answers = array();
+			$results = array();
+			$pattern = '/([^\s,]*?){([\d]+)}/';
+
+			foreach ( $fields as $field ) {
+				if ( property_exists( $field, 'enablePersonalityQuiz' ) && $field->enablePersonalityQuiz ) {
+					if ( 'checkbox' === $field->type ) {
+						foreach ( $field->inputs as $input ) {
+							if ( array_key_exists( $input['id'], $lead ) ) {
+								$answers[] = $lead[ $input['id'] ];
+							}
+						}
+					} elseif ( 'radio' === $field->type ) {
+						if ( array_key_exists( $field->id, $lead ) ) {
+							$answers[] = $lead[ $field->id ];
+						}
+					}
+				}
+			}
+
+			foreach ( $answers as $answer ) {
+				if ( preg_match_all( $pattern, $answer, $matches ) ) {
+					foreach ( $matches[1] as $index => $match_key ) {
+						// Set or add the value to the corresponding key in the results.
+						$results[ $match_key ] = array_key_exists( $match_key, $results )
+							? $results[ $match_key ] + intval( $matches[2][ $index ] )
+							: intval( $matches[2][ $index ] );
+					}
+				}
+			}
+
+			// Return an array of just the winner - or winners if it's a tie.
+			$winners = array_keys( $results, max( $results ), true );
 			// Return the winner, or if it was a tie, a random winner.
 			shuffle( $winners );
 			return $winners[0];
