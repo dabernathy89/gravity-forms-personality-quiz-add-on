@@ -56,6 +56,10 @@ if ( class_exists( 'GFForms' ) ) :
 			$quiz_result = gform_get_meta( $entry['id'], 'personality_quiz_result' );
 
 			foreach ( $entry as $key => $value ) {
+				if($value === null) {
+					continue;
+				}
+
 				if ( strpos( $value, '{personality_quiz_result' ) !== false
 					|| strpos( $value, '{personality_quiz_result_percent' ) !== false
 					|| strpos( $value, '{personality_quiz_result_average' ) !== false ) {
